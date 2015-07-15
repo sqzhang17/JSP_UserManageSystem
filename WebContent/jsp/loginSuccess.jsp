@@ -31,12 +31,12 @@
 		}
 		
 		//declare paging parameters
-		int currPage = 3;
+		int currPage = request.getParameter("currPage")==null?1:Integer.parseInt(request.getParameter("currPage"));
 		int pageSize = 5;
-		int totalRowCount=0;
-		int totalPageCount=0;
+		int rowCount=0;
+		int pageCount=0;
 		
-		//develop query for paging 
+		//develop query for paging
 		pagingQuery = "select userid, username, email, grade, password from users where userid limit ?, ?";
 		pagingPsm = con.prepareStatement(pagingQuery);
 		pagingPsm.setInt(1, (currPage-1)*pageSize);
@@ -48,6 +48,20 @@
 		// get number of column fro paging query
 		ResultSetMetaData rsmd = pagingRs.getMetaData();
 		int columnCount = rsmd.getColumnCount();
+		
+		//develop query for total count, rcQuery -> row count query 
+		String rcQuery ="select count(*) from users";
+		PreparedStatement rcqPsm = con.prepareStatement(rcQuery);
+		
+		//execute query for total count 
+		ResultSet rcRs = rcqPsm.executeQuery();
+		
+		//get row count 
+		if(rcRs.next()) rowCount = Integer.parseInt(rcRs.getString(1));
+		
+		//calculte page count
+		pageCount = rowCount%pageSize==0?(rowCount/pageSize):(rowCount/pageSize+1);
+				
 	%>
 	
 	<table border="1px solid blue" align="center">
@@ -75,6 +89,31 @@
 
 		</tbody>
 	</table>
+	
+	<!-- set previous link -->
+	<div align="center">
+	<%String href=null;
+	if(currPage!=1){
+		href = "loginSuccess.jsp?uname="+uname+"&grade="+grade+"&currPage="+(currPage-1);%>
+		<a href=<%=href %>>previous</a>
+	<%} %>
+
+	<!-- set next 5 page link-->
+	<%for(int i=0;i<5;i++){ 
+		if(currPage+i<=pageCount){
+			href="loginSuccess.jsp?uname="+uname+"&grade="+grade+"&currPage="+(currPage+i);%>
+			<a href=<%=href %>><%if(i==0)%><mark><%=currPage+i %><%if(i==0)%></mark></a>
+		<%}
+	}%>
+	
+	<!-- set next link -->
+	<%if(currPage!=pageCount){
+		href="loginSuccess.jsp?uname="+uname+"&grade="+grade+"&currPage="+(currPage+1);%>
+		<a href=<%=href %>>next</a>
+	<%}%>
+	</div>
+	
+	<!-- return to login page -->
 	<br>
 	<a href="login.jsp">Return to login page.</a>
 </body>
