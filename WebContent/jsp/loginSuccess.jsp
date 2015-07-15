@@ -14,11 +14,13 @@
 	<h1>Login Success!</h1><hr>
 	Welcome, <%=uname %>.<br>
 	<%
+		//declare parameters for connection and query
 		Connection con = null;
-		PreparedStatement psm = null;
-		String query = null;
-		ResultSet rs = null;
+		PreparedStatement pagingPsm = null;
+		String pagingQuery = null;
+		ResultSet pagingRs = null;
 		
+		//build connection
 		try{
 			//get driver
 			Class.forName("com.mysql.jdbc.Driver");
@@ -28,30 +30,43 @@
 			e.printStackTrace();
 		}
 		
-		query = "select * from users";
-		psm = con.prepareStatement(query);
-		rs = psm.executeQuery();
-		ResultSetMetaData rsmd = rs.getMetaData();
+		//declare paging parameters
+		int currPage = 3;
+		int pageSize = 5;
+		int totalRowCount=0;
+		int totalPageCount=0;
 		
+		//develop query for paging 
+		pagingQuery = "select userid, username, email, grade, password from users where userid limit ?, ?";
+		pagingPsm = con.prepareStatement(pagingQuery);
+		pagingPsm.setInt(1, (currPage-1)*pageSize);
+		pagingPsm.setInt(2, pageSize);
+		
+		//execute paging query
+		pagingRs = pagingPsm.executeQuery();
+		
+		// get number of column fro paging query
+		ResultSetMetaData rsmd = pagingRs.getMetaData();
 		int columnCount = rsmd.getColumnCount();
 	%>
 	
 	<table border="1px solid blue" align="center">
 		<tbody>
 			<tr>
-				<th>UserID</th><th>Username</th><th>Password</th><th>Email</th><th>Grade</th>
+				<th>UserID</th><th>Username</th><th>Email</th><th>Grade</th>
 				<% if(grade.equals("1")){%>
-					<th>Update</th><th>Delete</th>
+					<th>Password</th><th>Update</th><th>Delete</th>
 				<% } %>
 			</tr>
 			
-			<%while(rs.next()){%>	
+			<%while(pagingRs.next()){%>	
 			<tr>
-				<% for(int i=1;i<=columnCount;i++){%>
-					<td><%= rs.getString(i)%></td>
+				<% for(int i=1;i<=columnCount-1;i++){%>
+					<td><%= pagingRs.getString(i)%></td>
 				<% }%>
 				
 				<% if(grade.equals("1")){ %>
+					<td><%=pagingRs.getString("password") %></td>
 					<td><a href="???">Update</a></td>
 					<td><a href="???">Delete</a></td>
 				<% }%>
