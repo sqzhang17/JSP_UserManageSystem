@@ -9,6 +9,21 @@
 <body bgcolor=pink>
 	<h1>Welcome</h1>
 	<hr>
+	<%
+		//get error message
+		String error = request.getParameter("err");
+		//check error message
+		if(error!=null){
+			if(error.equals("wrongPassword")){
+	%>
+				Login fail: Wrong password.<br>
+	<%
+			}else if(error.equals("userNotExists")){
+	%>
+				Login fail: User not exists.<br>
+	<%
+			}}
+	%>
 	<form action="loginProcess.jsp" method="post">
 		<table>
 		<tr><td>User Name: </td> <td><input type="text" name="un"></td></tr>
