@@ -32,9 +32,10 @@
 		
 		//declare paging parameters
 		int currPage = request.getParameter("currPage")==null?1:Integer.parseInt(request.getParameter("currPage"));
-		int pageSize = 5;
+		int pageSize = 3;
 		int rowCount=0;
 		int pageCount=0;
+		int displayCount=3;
 		
 		//develop query for paging
 		pagingQuery = "select userid, username, email, grade, password from users where userid limit ?, ?";
@@ -99,11 +100,24 @@
 	<%} %>
 
 	<!-- set next 5 page link-->
-	<%for(int i=0;i<5;i++){ 
-		if(currPage+i<=pageCount){
-			href="loginSuccess.jsp?uname="+uname+"&grade="+grade+"&currPage="+(currPage+i);%>
-			<a href=<%=href %>><%if(i==0)%><mark><%=currPage+i %><%if(i==0)%></mark></a>
-		<%}
+	<%for(int i=0;i<displayCount;i++){
+		if(currPage>pageCount-displayCount+1){
+			href="loginSuccess.jsp?uname="+uname+"&grade="+grade+"&currPage="+(pageCount-displayCount+1+i);
+			out.println("<a href="+href+">[");
+			if(pageCount-displayCount+1+i==currPage){out.println("<mark>");}
+			out.println(pageCount-displayCount+1+i);
+			if(pageCount-displayCount+1+i==currPage){out.println("</mark>");}
+			out.println("]</a>");
+		}else{
+			if(currPage+i<=pageCount){
+				href="loginSuccess.jsp?uname="+uname+"&grade="+grade+"&currPage="+(currPage+i);
+				out.println("<a href="+href+">[");
+				if(i==0){out.println("<mark>");}
+				out.println(currPage+i);
+				if(i==0){out.println("</mark>");}
+				out.println("]</a>");
+			}
+		}
 	}%>
 	
 	<!-- set next link -->
