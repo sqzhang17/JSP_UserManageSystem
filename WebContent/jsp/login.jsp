@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@ page language="java" import="com.model.*" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -7,23 +7,14 @@
 <title>Insert title here</title>
 </head>
 <body bgcolor=pink>
-	<h1>Welcome</h1>
+	<h1>Welcome to the User Management System!</h1>
 	<hr>
 	<%
 		//get error message
 		String error = request.getParameter("err");
-		//check error message
-		if(error!=null){
-			if(error.equals("wrongPassword")){
+		out.println(new ErrorFunc().errorPrint(error));
 	%>
-				Login fail: Wrong password.<br>
-	<%
-			}else if(error.equals("userNotExists")){
-	%>
-				Login fail: User not exists.<br>
-	<%
-			}}
-	%>
+
 	<form action="loginProcess.jsp" method="post">
 		<table>
 		<tr><td>User Name: </td> <td><input type="text" name="un"></td></tr>
@@ -32,5 +23,9 @@
 		<input type="submit" value="Login">
 		<input type="reset" value="Reset">
 	</form>
+	
+	<br><br>
+	<a>Author: Shiqi Zhang</a><br>
+	<a>Date:&nbsp&nbsp&nbsp&nbsp 07/16/2015</a>
 </body>
 </html>
